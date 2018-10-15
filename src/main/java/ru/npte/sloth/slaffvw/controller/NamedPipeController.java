@@ -23,7 +23,7 @@ public class NamedPipeController implements Runnable {
 
         this.affects = affects;
         try {
-            pipe = new RandomAccessFile(pipeName, "r");
+            pipe = new RandomAccessFile(pipeName, "rw");
         } catch (FileNotFoundException e) {
             logger.error("Error", e);
         }
