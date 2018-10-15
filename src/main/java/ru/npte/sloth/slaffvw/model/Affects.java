@@ -1,10 +1,15 @@
 package ru.npte.sloth.slaffvw.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Affects {
+
+    private static final Logger logger = LoggerFactory.getLogger(Affects.class);
 
     private final List<Affect> affects;
     private final String lock = "LOCK";
@@ -40,6 +45,8 @@ public class Affects {
         for (String prefsAffect : prefsAffects) {
             newAffects.add(new Affect(prefsAffect, true));
         }
+
+        logger.debug("Set new affects: \n {}", newAffects.stream().map(Affect::toString).collect(Collectors.joining("\n,")));
 
         synchronized(lock) {
             affects.clear();

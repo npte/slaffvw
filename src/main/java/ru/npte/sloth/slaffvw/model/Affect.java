@@ -29,4 +29,9 @@ public class Affect {
     public boolean isPreffered() {
         return preffered;
     }
+
+    @Override
+    public String toString() {
+        return this.name + ":" + this.remainingTime;
+    }
 }
