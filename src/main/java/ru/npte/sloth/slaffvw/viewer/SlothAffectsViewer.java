@@ -45,9 +45,9 @@ public class SlothAffectsViewer implements Runnable {
     public void run() {
         try {
             KeyStroke keyStroke = null;
-            this.screen.clear();
             while (screen != null && keyStroke == null) {
                 int row = 0;
+                this.screen.clear();
                 for (Affect affect : affects.getAffects()) {
                     logger.debug("Print string {}:{} at row {}", formatAffectName(affect.getName()), formatAffectDuration(affect.getRemainingTime()), row);
                     setDefaultColors(textGraphics);
