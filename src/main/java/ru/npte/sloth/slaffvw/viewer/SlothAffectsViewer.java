@@ -2,6 +2,7 @@ package ru.npte.sloth.slaffvw.viewer;
 
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.Terminal;
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,7 +45,8 @@ public class SlothAffectsViewer implements Runnable {
 
     public void run() {
         try {
-            while (screen != null) {
+            KeyStroke kk = null;
+            while (screen != null && kk == null) {
                 int row = 0;
 
                 for (Affect affect : affects.getAffects()) {
@@ -53,13 +55,18 @@ public class SlothAffectsViewer implements Runnable {
                     textGraphics.putString(0, row, formatAffectName(affect.getName()));
                     setColors(textGraphics, affect.getRemainingTime());
                     textGraphics.putString(MAX_AFFECT_NAME_LENGTH + 3, row++, formatAffectDuration(affect.getRemainingTime()));
-
                 }
-
+                kk = screen.pollInput();
                 screen.refresh();
-                Thread.sleep(1000);
+                Thread.sleep(100);
             }
         } catch (Exception e) {
+            logger.error("Error", e);
+        }
+        try {
+            logger.debug("Stopping screen");
+            screen.stopScreen();
+        } catch (IOException e) {
             logger.error("Error", e);
         }
     }

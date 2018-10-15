@@ -10,10 +10,10 @@ public class App {
     public static void main( String[] args ) {
         Affects affects = new Affects();
 
-        SlothAffectsViewer viewer = new SlothAffectsViewer(affects);
-        NamedPipeController pipeController = new NamedPipeController(affects);
+        new Thread(new SlothAffectsViewer(affects)).start();
 
-        new Thread(viewer).start();
-        new Thread(pipeController).start();
+        Thread pipeController = new Thread(new NamedPipeController(affects));
+        pipeController.setDaemon(true);
+        pipeController.start();
     }
 }
