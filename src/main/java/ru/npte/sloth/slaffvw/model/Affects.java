@@ -38,7 +38,11 @@ public class Affects {
             logger.debug("After split have {} tokens", aff.length);
             Integer affSeconds = 0;
             if (StringUtils.isNotBlank(aff[1])) {
-                affSeconds = Integer.parseInt(aff[1]);
+                try {
+                    affSeconds = Integer.parseInt(aff[1]);
+                } catch (NumberFormatException e) {
+
+                }
             }
             newAffects.add(new Affect(aff[0], affSeconds, prefsAffects.contains(aff[0])));
             prefsAffects.remove(aff[0]);
