@@ -1,0 +1,22 @@
+<configuration debug="true">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %level [%thread] %logger{5} errorUUID:%mdc{rqUid} - %msg %n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>slaffvw.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>slaffvw-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{35} errorUUID:%mdc{rqUid} - %msg %n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+</configuration>
