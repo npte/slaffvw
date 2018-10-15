@@ -37,7 +37,6 @@ public class SlothAffectsViewer implements Runnable {
             this.screen = new TerminalScreen(terminal);
             this.textGraphics = this.screen.newTextGraphics();
             this.screen.startScreen();
-            this.screen.clear();
         } catch (IOException e) {
             logger.error("Error", e);
         }
@@ -45,10 +44,10 @@ public class SlothAffectsViewer implements Runnable {
 
     public void run() {
         try {
-            KeyStroke kk = null;
-            while (screen != null && kk == null) {
+            KeyStroke keyStroke = null;
+            this.screen.clear();
+            while (screen != null && keyStroke == null) {
                 int row = 0;
-
                 for (Affect affect : affects.getAffects()) {
                     logger.debug("Print string {}:{} at row {}", formatAffectName(affect.getName()), formatAffectDuration(affect.getRemainingTime()), row);
                     setDefaultColors(textGraphics);
@@ -56,7 +55,7 @@ public class SlothAffectsViewer implements Runnable {
                     setColors(textGraphics, affect.getRemainingTime());
                     textGraphics.putString(MAX_AFFECT_NAME_LENGTH + 3, row++, formatAffectDuration(affect.getRemainingTime()));
                 }
-                kk = screen.pollInput();
+                keyStroke = screen.pollInput();
                 screen.refresh();
                 Thread.sleep(100);
             }
