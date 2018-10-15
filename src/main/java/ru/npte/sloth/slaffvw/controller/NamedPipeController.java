@@ -33,8 +33,8 @@ public class NamedPipeController implements Runnable {
         try {
             while (pipe != null) {
                 String affectsLine = pipe.readLine();
-                logger.debug("Readed string {}", affectsLine);
                 if (affectsLine != null) {
+                    logger.debug("Readed string {}", affectsLine);
                     affects.setAffectsList(affectsLine);
                 }
                 Thread.sleep(100);
