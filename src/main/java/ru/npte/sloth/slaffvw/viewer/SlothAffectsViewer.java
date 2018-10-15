@@ -48,10 +48,12 @@ public class SlothAffectsViewer implements Runnable {
                 int row = 0;
 
                 for (Affect affect : affects.getAffects()) {
+                    logger.debug("Print string {}:{} at row {}", formatAffectName(affect.getName()), formatAffectDuration(affect.getRemainingTime()), row);
                     setDefaultColors(textGraphics);
                     textGraphics.putString(0, row, formatAffectName(affect.getName()));
                     setColors(textGraphics, affect.getRemainingTime());
                     textGraphics.putString(MAX_AFFECT_NAME_LENGTH + 3, row++, formatAffectDuration(affect.getRemainingTime()));
+
                 }
 
                 screen.refresh();
