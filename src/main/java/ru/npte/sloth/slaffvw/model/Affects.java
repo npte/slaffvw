@@ -33,7 +33,9 @@ public class Affects {
         Set<String> prefsAffects = new HashSet<>(preferredAffects);
 
         for (String affLine : affectsLine.split("\\|")) {
+            logger.debug("Spliting string {}", affLine);
             String[] aff = affLine.split(":");
+            logger.debug("After split have {} tokens", aff.length);
             Integer affSeconds = 0;
             if (StringUtils.isNotBlank(aff[1])) {
                 affSeconds = Integer.parseInt(aff[1]);
