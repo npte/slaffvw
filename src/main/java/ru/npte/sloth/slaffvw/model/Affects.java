@@ -37,7 +37,7 @@ public class Affects {
             String[] aff = affLine.split(":");
             logger.debug("After split have {} tokens", aff.length);
             Integer affSeconds = 0;
-            if (StringUtils.isNotBlank(aff[1])) {
+            if (aff.length > 1 && StringUtils.isNotBlank(aff[1])) {
                 try {
                     affSeconds = Integer.parseInt(aff[1]);
                 } catch (NumberFormatException e) {
