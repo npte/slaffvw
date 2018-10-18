@@ -24,7 +24,7 @@ public class SlothAffectsViewer implements Runnable {
     private TextGraphics textGraphics;
     private TerminalScreen screen;
 
-    private final static String normalColor = "WHITE";
+    private final static String normalColor = "WHITE_1";
     private final static String warningColor = "RED";
 
     private final static int MAX_AFFECT_NAME_LENGTH = 20;
