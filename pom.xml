@@ -5,7 +5,7 @@
     <groupId>ru.npte.sloth</groupId>
     <artifactId>slaffvw</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>slaffvw</name>
 
     <build>
