@@ -3,22 +3,22 @@ package ru.npte.sloth.slaffvw.viewer;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.Terminal;
-import org.apache.commons.lang3.StringUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.npte.sloth.slaffvw.model.Affect;
-import ru.npte.sloth.slaffvw.model.Affects;
-
-import java.io.IOException;
-
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.npte.sloth.slaffvw.model.Affects;
+import ru.npte.sloth.slaffvw.model.draw.Color;
+import ru.npte.sloth.slaffvw.model.draw.DrawString;
+import ru.npte.sloth.slaffvw.model.draw.Screen;
+
+import java.io.IOException;
+import java.util.List;
 
 public class SlothAffectsViewer implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(SlothAffectsViewer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlothAffectsViewer.class);
 
     private final Affects affects;
     private TextGraphics textGraphics;
@@ -27,84 +27,66 @@ public class SlothAffectsViewer implements Runnable {
     private final static String normalColor = "WHITE_1";
     private final static String warningColor = "RED";
 
+    private Screen screenBuffer;
+
+
     private final static int MAX_AFFECT_NAME_LENGTH = 20;
 
     public SlothAffectsViewer(Affects affects) {
         this.affects = affects;
-
+        this.screenBuffer = new Screen();
         try {
             Terminal terminal = new DefaultTerminalFactory().createTerminal();
             this.screen = new TerminalScreen(terminal);
             this.textGraphics = this.screen.newTextGraphics();
             this.screen.startScreen();
         } catch (IOException e) {
-            logger.error("Error", e);
+            LOGGER.error("Error", e);
         }
     }
 
     public void run() {
         try {
             KeyStroke keyStroke = null;
+            if (screen != null) {
+                screen.clear();
+            }
             while (screen != null && keyStroke == null) {
-                int row = 0;
-                this.screen.clear();
-                for (Affect affect : affects.getAffects()) {
-                    logger.debug("Print string {}:{} at row {}", formatAffectName(affect.getName()), formatAffectDuration(affect.getRemainingTime()), row);
-                    setDefaultColors(textGraphics);
-                    textGraphics.putString(0, row, formatAffectName(affect.getName()));
-                    setColors(textGraphics, affect.getRemainingTime());
-                    textGraphics.putString(MAX_AFFECT_NAME_LENGTH + 3, row++, formatAffectDuration(affect.getRemainingTime()));
+                List<DrawString> drawStrings = screenBuffer.getDrawStrings(affects.getAffects());
+
+                for (DrawString drawString : drawStrings) {
+                    LOGGER.debug("Print string {} at row {} col {}", drawString.getDrawString(), drawString.getRow(), drawString.getCol());
+                    textGraphics.setForegroundColor(getANSIColor(drawString.getFontColor()));
+                    textGraphics.setBackgroundColor(getANSIColor(drawString.getBackGroundColor()));
+                    textGraphics.putString(drawString.getCol(), drawString.getRow(), drawString.getDrawString());
                 }
+
                 keyStroke = screen.pollInput();
                 screen.refresh();
                 Thread.sleep(100);
             }
         } catch (Exception e) {
-            logger.error("Error", e);
+            LOGGER.error("Error", e);
         }
         try {
-            logger.debug("Stopping screen");
+            LOGGER.debug("Stopping screen");
             screen.stopScreen();
         } catch (IOException e) {
-            logger.error("Error", e);
+            LOGGER.error("Error", e);
         }
     }
 
-    private String formatAffectName(String affectName) {
-        String name = affectName;
-        if (affectName.length() > 20) {
-            name = affectName.substring(0, MAX_AFFECT_NAME_LENGTH);
-        }
-        return StringUtils.leftPad(name, MAX_AFFECT_NAME_LENGTH) + " : ";
-    }
 
-    private String formatAffectDuration(Integer affectDuration) {
-        int min = affectDuration != null ? affectDuration / 60 : 0;
-        int sec = affectDuration != null ? affectDuration - min * 60 : 0;
-        return String.format("%3d:%02d", min, sec);
-    }
-
-    private void setDefaultColors(TextGraphics textGraphics) {
-        textGraphics.setForegroundColor(getANSIColor(normalColor));
-        textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
-    }
-
-    private void setColors(TextGraphics textGraphics, Integer value) {
-        if (value == null) {
-            textGraphics.setBackgroundColor(getANSIColor(warningColor));
-            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-            return;
-        }
-        if (value < 60) {
-            textGraphics.setForegroundColor(getANSIColor(warningColor));
-        }
-    }
-
-    private TextColor.ANSI getANSIColor(String colorName) {
-        try {
-            return TextColor.ANSI.valueOf(colorName);
-        } catch (IllegalArgumentException e) {
-            return TextColor.ANSI.DEFAULT;
+    private TextColor.ANSI getANSIColor(Color color) {
+        switch (color) {
+            case DEFAULT:
+                return TextColor.ANSI.DEFAULT;
+            case RED:
+                return TextColor.ANSI.RED;
+            case BLACK:
+                return TextColor.ANSI.BLACK;
+            default:
+                return TextColor.ANSI.DEFAULT;
         }
     }
 

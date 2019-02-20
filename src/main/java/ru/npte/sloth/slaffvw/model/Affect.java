@@ -6,7 +6,7 @@ public class Affect {
     private final Integer remainingTime;
     private boolean preffered;
 
-    Affect(String name, Integer remainingTime, Boolean preffered) {
+    public Affect(String name, Integer remainingTime, Boolean preffered) {
         this.name = name;
         this.remainingTime = remainingTime;
         this.preffered = preffered;

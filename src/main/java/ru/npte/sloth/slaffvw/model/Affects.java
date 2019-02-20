@@ -4,12 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Affects {
 
-    private static final Logger logger = LoggerFactory.getLogger(Affects.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Affects.class);
 
     private final List<Affect> affects;
     private final String lock = "LOCK";
@@ -33,26 +36,27 @@ public class Affects {
         Set<String> prefsAffects = new HashSet<>(preferredAffects);
 
         for (String affLine : affectsLine.split("\\|")) {
-            logger.debug("Spliting string {}", affLine);
+            LOGGER.debug("Spliting string {}", affLine);
             String[] aff = affLine.split(":");
-            logger.debug("After split have {} tokens", aff.length);
-            Integer affSeconds = 0;
+            LOGGER.debug("After split have {} tokens", aff.length);
+            int affSeconds = 0;
             if (aff.length > 1 && StringUtils.isNotBlank(aff[1])) {
                 try {
                     affSeconds = Integer.parseInt(aff[1]);
                 } catch (NumberFormatException e) {
 
                 }
+                newAffects.add(new Affect(aff[0], affSeconds, prefsAffects.contains(aff[0])));
+                prefsAffects.remove(aff[0]);
             }
-            newAffects.add(new Affect(aff[0], affSeconds, prefsAffects.contains(aff[0])));
-            prefsAffects.remove(aff[0]);
+
         }
 
         for (String prefsAffect : prefsAffects) {
             newAffects.add(new Affect(prefsAffect, true));
         }
 
-        logger.debug("Set new affects: \n {}", newAffects.stream().map(Affect::toString).collect(Collectors.joining("\n,")));
+        LOGGER.debug("Set new affects: \n {}", newAffects.stream().map(Affect::toString).collect(Collectors.joining("\n,")));
 
         synchronized(lock) {
             affects.clear();
