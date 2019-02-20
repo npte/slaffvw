@@ -18,7 +18,7 @@ public class NamedPipeController implements Runnable {
 
         String pipeName = System.getProperty("pipe.name");
         if (pipeName == null) {
-            pipeName = "./slaffvw_named_pipe";
+            pipeName = "slaffvw_named_pipe";
         }
 
         this.affects = affects;
